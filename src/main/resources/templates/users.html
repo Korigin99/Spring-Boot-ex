@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+h2 {
+	width: 1200px;
+	margin: 0 auto;
+	text-align: center;
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+#ta{
+	width:1200px;
+}
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 1200px;
+	margin: 0 auto;
+}
+
+td, th {
+	width:400px;
+	border: 1px solid black;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: rgb(255, 255, 128);
+}
+h3{
+	width: 200px;
+	margin: 0 auto;
+	text-align: center;
+	height: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+#dd3{
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+}
+#dd0{
+	display: flex;
+	flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+}
+#dd1{
+	width: 400px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+#dd {
+	width: 250px;
+    height: 200px;
+    padding-bottom: 20px;
+    flex-direction: column;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    background: yellow;
+}
+#dd input, button{
+	width: 200px;
+	margin: 0 auto;
+}
+#dd2 {
+	width: 250px;
+    height: 150px;
+    padding-bottom: 20px;
+    flex-direction: column;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    background: yellow;
+    border: 1px solid black;
+}
+#dd2 input{
+	width: 200px;
+	margin: 0 auto;
+}
+
+@media (max-width: 1400px){
+	h2{
+		width: 700px;
+	}
+	#dd0{
+		display: flex;
+    	flex-direction: column;
+    	margin: 0 auto;
+	}
+	#dd1{
+		width: 900px;
+		height: 200px;
+	}
+	#ta{
+		width: 900px;
+	}
+	table{
+		display: table-cell;
+	}
+}
+
+</style>
+</head>
+<body>
+	<h2>디엔비코드 관리자 페이지</h2>
+	<h3 th:text="${name} + '님 환영합니다.'"></h3>
+	<div id="dd3">
+		<div id="dd0">
+			<div id="dd1">
+					<div id="dd2">
+				<h3>*사용자 정보 삭제*</h3>					
+						<input id="d_id" type="text" placeholder="사용자 아이디를 입력해주세요....">
+						<button type="button" onclick="doDelete()">사용자 정보 삭제</button>
+					</div>
+			</div>
+			<div id="ta">
+				<table id="users">
+					<tr>
+						<th id="usersName">사용자 이름</th>
+						<th id="usersId">사용자 아이디</th>
+						<th id="usersPw">사용자 비밀번호</th>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+	integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+	
+<script type="text/javascript">
+callMyAPI(); //함수 호출
+
+function callMyAPI() {
+	$.ajax({
+		url : '/api/v1/users',
+		type : 'GET',
+		dataType : 'json',
+		success : function(response) {
+			console.log(response);
+			for (var i = 0; i < response.length; i++) {
+				tr = $('<tr></tr>');
+				usersName = $('<td>' + response[i].name + '</td>');
+				usersId = $('<td>' + response[i].id + '</td>');
+				usersPw = $('<td>' + response[i].pw + '</td>');
+				tr.append(usersName);
+				tr.append(usersId);
+				tr.append(usersPw);
+				$("#users").append(tr);
+			}
+		}
+	});
+}
+
+function doDelete(){
+	// 제이쿼리 : $('#d_empno').val();
+	// 바닐라 스크립트 : document.getElementById('d_empno').value;
+	var d_id = $("#d_id").val();
+	
+	if(d_id == ""){
+		alert("사용자 아이디를 입력해주세요.");
+		$('#d_id').focus();
+		return false;
+	}
+	
+	//부서삭제 ajax연결하기 
+	$.ajax({
+		url : '/api/v1/users/'+d_id,
+		type : 'DELETE',
+		dataType : 'json',
+		success : function(response) {
+			alert("사용자 정보 삭제 완료!😂😂;")
+			location.reload(); //강제 새로고침
+		}
+	});
+}
+</script>
+</html>

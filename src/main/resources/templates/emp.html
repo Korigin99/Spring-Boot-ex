@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+h2 {
+	width: 1200px;
+	margin: 0 auto;
+	text-align: center;
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+h3{
+	width: 400px;
+	margin: 0 auto;
+	text-align: center;
+	height: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 1200px;
+	margin: 0 auto;
+}
+
+td, th {
+	border: 1px solid black;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+#dd {
+	width: 1200px; margin : 0 auto;
+	padding-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	margin: 0 auto;
+	display : flex;
+	flex-direction : row;
+	justify-content: space-around;
+}
+#dd2 {
+	width: 800px; margin : 0 auto;
+	padding-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	margin: 0 auto;
+	display : flex;
+	flex-direction : row;
+	justify-content: space-around;
+}
+#dd3 {
+	width: 400px; margin : 0 auto;
+	padding-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	margin: 0 auto;
+	display : flex;
+	flex-direction : row;
+	justify-content: space-around;
+}
+</style>
+</head>
+<body>
+	<h2>안녕하세요 여기는 EMP 화면 입니다.</h2>
+		<h3>*사원 추가*</h3>
+		<div id="dd">
+			<input id="empno" type="text" placeholder="사원변호를 입력해주세요." />
+			<input id="ename" type="text" placeholder="사원이름를 입력해주세요." />
+			<input id="job" type="text" placeholder="사원직책를 입력해주세요." />
+			<input id="sal"	type="text" placeholder="사원급여를 입력해주세요." />
+			<button type="button" onclick="join()">사원 추가</button>
+		</div>
+		<h3>*사원 정보 수정*</h3>
+		<div id="dd2">
+			<input id="u_empno" type="text" placeholder="사원번호를 입력해주세요....">
+			<input id="u_job" type="text" placeholder="사원직책를 입력해주세요....">
+			<input id="u_sal" type="text" placeholder="사원급여를 입력해주세요....">
+			<button type="button" onclick="doUpdate()">사원 정보 수정</button>
+		</div>
+		<h3>*사원 삭제*</h3>
+		<div id="dd3">
+			
+			<input id="d_empno" type="text" placeholder="사원번호를 입력해주세요....">
+			<button type="button" onclick="doDelete()">사원 삭제</button>
+		</div>
+	<table id="emp">
+		<tr>
+			<th id="empno">사원번호</th>
+			<th id="ename">사원이름</th>
+			<th id="job">직업</th>
+			<th id="sal">급여</th>
+			<th id="hiredate">입사날짜</th>
+		</tr>
+	</table>
+
+
+
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+	integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+	callMyAPI(); //함수 호출
+
+	function callMyAPI() {
+		$.ajax({
+			url : '/api/v1/emp',
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				console.log(response);
+				for (var i = 0; i < response.length; i++) {
+					tr = $('<tr></tr>');
+					empno = $('<td>' + response[i].empno + '</td>');
+					ename = $('<td>' + response[i].ename + '</td>');
+					job = $('<td>' + response[i].job + '</td>');
+					sal = $('<td>' + response[i].sal + '</td>');
+					hiredate = $('<td>' + response[i].hiredate + '</td>');
+					tr.append(empno);
+					tr.append(ename);
+					tr.append(job);
+					tr.append(sal);
+					tr.append(hiredate);
+					$("#emp").append(tr);
+				}
+			}
+		});
+	}
+
+	function join() {
+		var empno = $('#empno').val();
+		var ename = $('#ename').val();
+		var job = $('#job').val();
+		var sal = $('#sal').val();
+
+		var jsonData = {
+			"empno" : empno,
+			"ename" : ename,
+			"job" : job,
+			"sal" : sal
+		};
+
+		$.ajax({
+			url : '/api/v1/emp/join',
+			type : 'POST',
+			contentType : 'application/json', //서버에 json 타입으로 보낼 예정(요청) 
+			data : JSON.stringify(jsonData),
+			dataType : 'json',
+			success : function(response) {
+				console.log(response);
+				alert("사원 추가 완료");
+				location.reload(); //강제 새로고침
+			}
+		});
+	}
+	
+	function doDelete(){
+		// 문제 사원번호 입력을 9999 넘으면 사원번호가 '잘못된 사원번호 입니다.' 라는 alert창 보여주기!
+		// 제이쿼리 : $('#d_empno').val();
+		// 바닐라 스크립트 : document.getElementById('d_empno').value;
+		var empno = $("#d_empno").val();
+		
+		if(empno > 9999){
+			alert("잘못된 사원번호 입니다.'(9999이하로 입력해주세요)'");
+			$('#d_empno').focus();
+			$('#d_empno').val('');
+			return false;
+		}
+		if(empno == ""){
+			alert("사원번호를 입력해주세요.");
+			$('#d_empno').focus();
+			return false;
+		}
+		
+		//사원삭제 ajax연결하기 
+		$.ajax({
+			url : '/api/v1/emp/'+empno,
+			type : 'DELETE',
+			dataType : 'json',
+			success : function(response) {
+				alert("사원 삭제 완료!✋✋");
+				location.reload(); //강제 새로고침
+			}
+		});
+	}
+	
+	function doUpdate(){
+		var empno = $('#u_empno').val();
+		var sal = $('#u_sal').val();
+		var job = $('#u_job').val();
+		
+		var jsonData = {
+				"empno" : empno,
+				"job" : job,
+				"sal" : sal
+			};
+
+			$.ajax({
+				url : '/api/v1/emp',
+				type : 'PATCH',
+				contentType : 'application/json', //서버에 json 타입으로 보낼 예정(요청) 
+				data : JSON.stringify(jsonData),
+				dataType : 'json',
+				success : function(response) {
+					console.log(response);
+					alert("사원 정보 수정 완료");
+					location.reload(); //강제 새로고침
+				}
+			});
+	}
+	
+</script>
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>유튜버 문도 페이지</title>
+<style>
+
+body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	margin: 0 auto;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	background: black;
+}
+
+.box0 {
+	width: 500px;
+	height: 200px;
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+	color: white;
+}
+
+a {
+	text-decoration: none;
+}
+
+.box1 {
+	width: 200px;
+	height: 100px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	background: red;
+	border-radius: 10px
+}
+
+.box1:hover {
+	cursor: pointer;
+}
+
+.box1 p {
+	font-size: 30px;
+}
+h1:hover{
+	cursor: pointer;
+}
+
+.box2 {
+	width: 0;
+	height: 0;
+	margin: 0 auto;
+	border-bottom: 30px solid transparent;
+	border-top: 30px solid transparent;
+	border-left: 30px solid white;
+}
+
+.movie-row {
+	width: 1800px;
+	height: 600px;
+	display: flex;
+	margin: 0 auto;
+	justify-content: center;
+}
+
+.item {
+	width: 240px;
+	height: 505px;
+	border: 1px solid black;
+	text-align: center;
+	margin: 0 auto;
+	justify-content: center;
+	align-content: center;
+	color: white;
+	background: red;
+	border-radius: 20px;
+}
+
+.item:hover {
+	background: none;
+	cursor: pointer;
+}
+
+.item div {
+	width: 240px;
+	height: 350px;
+	margin: 0 auto;
+}
+
+.item div img {
+	width: 240px;
+	height: 350px;
+	margin: 0 auto;
+}
+</style>
+</head>
+<body>
+
+	<div class="box0">
+		<div class="box1">
+
+			<div class="box2"></div>
+		</div>
+		<h1>Preminum</h1>
+	</div>
+	<div class="movie-row">
+		<div class="item" data-tilt onclick="getMovieDetailInfo(this)">
+			<div id="movie-img-0">
+				<img alt="" src="/images/friends.jpg">
+			</div>
+			<p id="movie-title-0"></p>
+			<p id="movie-year-0"></p>
+			<p id="movie-runtime-0"></p>
+			<p id="movie-genre-0"></p>
+		</div>
+		<div class="item" data-tilt onclick="getMovieDetailInfo(this)">
+			<div id="movie-img-1">
+				<img alt="" src="/images/Minions.jpg">
+			</div>
+			<p id="movie-title-1"></p>
+			<p id="movie-year-1"></p>
+			<p id="movie-runtime-1"></p>
+			<p id="movie-genre-1"></p>
+		</div>
+		<div class="item" data-tilt onclick="getMovieDetailInfo(this)">
+			<div id="movie-img-2">
+				<img alt="" src="/images/cat.jpg">
+			</div>
+			<p id="movie-title-2"></p>
+			<p id="movie-year-2"></p>
+			<p id="movie-runtime-2"></p>
+			<p id="movie-genre-2"></p>
+		</div>
+		<div class="item" data-tilt onclick="getMovieDetailInfo(this)">
+			<div id="movie-img-3">
+				<img alt="" src="/images/Minions.jpg">
+			</div>
+			<p id="movie-title-3"></p>
+			<p id="movie-year-3"></p>
+			<p id="movie-runtime-3"></p>
+			<p id="movie-genre-3"></p>
+		</div>
+		<div class="item" data-tilt onclick="getMovieDetailInfo(this)">
+			<div id="movie-img-4">
+				<img alt="" src="/images/cat.jpg">
+			</div>
+			<p id="movie-title-4"></p>
+			<p id="movie-year-4"></p>
+			<p id="movie-runtime-4"></p>
+			<p id="movie-genre-4"></p>
+		</div>
+	</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+	integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	callMyAPI(); //함수 호출
+
+	function callMyAPI() {
+		$.ajax({
+			url : '/api/v1/movies',
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				console.log(response);
+				for (var i = 0; i < 5; i++) {
+					//영화 포스터 5개만 가져오기
+					//var posterUrl = 'https://m.media-amazon.com/images/M/MV5BMTQ2MzQ0NTk4N15BMl5BanBnXkFtZTcwMDc2NDYzNQ@@._V1_SX300.jpg';
+					//img 태그 생성 포스터 이미지 경로 src에 넣어주기
+					// var html = '<img src="' + posterUrl + '">';
+					//id가 movie-0 ~ movie-4 인 태그에 영화 포스터사진 append 하기!
+					//$('#movie-img-' + i).append(html);
+					$('#movie-title-' + i).append(response[i].title);
+					$('#movie-year-' + i).append(response[i].year);
+					$('#movie-runtime-' + i).append(response[i].runtime);
+					$('#movie-genre-' + i).append(response[i].genre);
+				}
+			}
+		});
+	}
+</script>
+</html>

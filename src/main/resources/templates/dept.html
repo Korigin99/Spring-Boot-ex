@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+h2 {
+	width: 1200px;
+	margin: 0 auto;
+	text-align: center;
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 1200px;
+	margin: 0 auto;
+}
+
+td, th {
+	border: 1px solid black;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+h3{
+	width: 400px;
+	margin: 0 auto;
+	text-align: center;
+	height: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+#dd {
+	width: 800px; margin : 0 auto;
+	padding-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	margin: 0 auto;
+	display : flex;
+	flex-direction : row;
+	justify-content: space-around;
+}
+#dd2 {
+	width: 400px; margin : 0 auto;
+	padding-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	margin: 0 auto;
+	display : flex;
+	flex-direction : row;
+	justify-content: space-around;
+}
+</style>
+</head>
+<body>
+	<h2>안녕하세요 여기는 dept 화면 입니다.</h2>
+	<h3>*부서 추가*</h3>
+		<div id="dd">
+			<input id="deptno" type="text" placeholder="부서번호를 입력해주세요." />
+			<input id="dname" type="text" placeholder="부서이름를 입력해주세요." />
+			<input id="loc" type="text" placeholder="부서위치를 입력해주세요." />
+			<button type="button" onclick="join()">부서 신설</button>
+		</div>
+		<h3>*부서 삭제*</h3>
+		<div id="dd2">
+			
+			<input id="d_deptno" type="text" placeholder="부서번호를 입력해주세요....">
+			<button type="button" onclick="doDelete()">부서 폐지</button>
+		</div>
+
+	<table id="dept">
+		<tr>
+			<th>부서번호</th>
+			<th>부서이름</th>
+			<th>부서위치</th>
+		</tr>
+	</table>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+	integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	callMyAPI(); //함수 호출
+
+	function callMyAPI() {
+		var s = [];
+		$.ajax({
+			url : '/api/v1/dept',
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				for (var i = 0; i < response.length; i++) {
+					var tr = '<tr><td>' + response[i].deptno + '</td><td>'
+							+ response[i].dname + '</td><td>' + response[i].loc
+							+ '</td></tr>';
+
+					//제이쿼리 append
+					$("#dept").append(tr);
+				}
+			}
+		});
+	}
+	
+	function join() {
+		var deptno = $('#deptno').val();
+		var dname = $('#dname').val();
+		var loc = $('#loc').val();
+
+		var jsonData = {
+			"deptno" : deptno,
+			"dname" : dname,
+			"loc" : loc,
+		};
+
+		$.ajax({
+			url : '/api/v1/dept/newdept',
+			type : 'POST',
+			contentType : 'application/json', //서버에 json 타입으로 보낼 예정(요청) 
+			data : JSON.stringify(jsonData),
+			dataType : 'json',
+			success : function(response) {
+				console.log(response);
+				alert("부서 신설 완료");
+				location.reload(); //강제 새로고침
+			}
+		});
+	}
+	
+	function doDelete(){
+		// 제이쿼리 : $('#d_empno').val();
+		// 바닐라 스크립트 : document.getElementById('d_empno').value;
+		var deptno = $("#d_deptno").val();
+		
+		if(deptno > 100){
+			alert("잘못된 부서번호 입니다.'(100이하로 입력해주세요)'");
+			$('#d_deptno').focus();
+			$('#d_deptno').val('');
+			return false;
+		}
+		if(deptno == ""){
+			alert("부서번호를 입력해주세요.");
+			$('#d_deptno').focus();
+			return false;
+		}
+		
+		//부서삭제 ajax연결하기 
+		$.ajax({
+			url : '/api/v1/dept/'+deptno,
+			type : 'DELETE',
+			dataType : 'json',
+			success : function(response) {
+				alert("부서 폐지 완료!😂😂;")
+				location.reload(); //강제 새로고침
+			}
+		});
+	}
+</script>
+</html>
+
+
+
+

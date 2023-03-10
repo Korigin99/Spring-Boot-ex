@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DnB Code Sign Up</title>
+<style>
+body{
+	width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+div {
+	width: 400px;
+    height: 600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    background: rgb(255, 255, 128);
+    border: 1px solid black;
+}
+h2{
+	width: 300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+input{
+	width: 200px;
+	height:30px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: center;
+	text-align: center;
+	border: 1px solid black;
+}
+button{
+	width: 200px;
+	height: 30px;
+	margin: 0 auto;
+	border: 1px solid black;
+	background: yellow;
+	font-weight: bold;
+    font-size: 15px;
+}
+button:hover{
+	background : lightpink;
+	cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+	<div>
+		<h2>디엔비코드 회원가입</h3>
+		<input id="userId" type="text" placeholder="아이디를 입력해주세요.">
+		<button type="button" onclick="doCheck()">아이디 충복 체크</button>
+		<input id="userName" type="text" placeholder="이름을 입력해주세요.">
+		<input id="userPw" type="password" placeholder="비밀번호를 입력해주세요.">
+		<button type="button" onclick="doJoin()">회원가입</button>
+	</div>
+	
+	<div>
+		<h2>디엔비코드 로그인</h3>
+		<input id="i_userId" type="text" placeholder="아이디를 입력해주세요.">
+		<input id="i_userPw" type="password" placeholder="비밀번호를 입력해주세요.">
+		<button type="button" onclick="doLogin()">로그인</button>
+	</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+	integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	
+	var isCheck = false;
+	
+	// 아이디 중복 체크 : 이미 가입된 아이디 찾기
+	function doCheck(){
+      var id = $('#userId').val();
+      
+      $.ajax({
+			url : '/api/v1/users/'+id,
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				//true면 이미 가입한 아이디가 존재!
+				if(response){
+					alert("이미 가입된 아이디입니다!😣😣");
+					return false;
+				}else{
+					alert("사용가능한 아이디입니다.😉😉");
+					isCheck = true;
+					return false;
+				}
+			}
+		});
+   }
+
+	function doJoin(){
+		//자바스크립트를 이용해서 빈칸 체크하기
+		
+		var userId = $("#userId").val();
+		var userName = $('#userName').val();
+		var userPw = $('#userPw').val();
+		
+		if (userId == ''){
+			alert("아이디를 입력해주세요..😈😈");
+			$("#userId").focus();
+			return;
+		};
+		if (userName == ''){
+			alert("이름을 입력해주세요..😈😈");
+			$("#userName").focus();
+			return;
+		};
+		if (userPw == ''){
+			alert("비밀번호를 입력해주세요..😈😈");
+			$('#userPw').focus();
+			return;
+		};
+		
+		
+		var jsonData = {
+			"id" : userId,
+			"name" : userName,
+			"pw" : userPw
+		};
+		
+		$.ajax({
+			url : '/api/v1/login3/join',
+			type : 'POST',
+			contentType : 'application/json', //서버에 json 타입으로 보낼 예정(요청) 
+			data : JSON.stringify(jsonData),
+			dataType : 'json',
+			success : function(response) {
+				console.log(response);
+				alert("디엔비코드에 오신것을 환영합니다!🎉");
+				location.reload(); //강제 새로고침
+			}
+		});
+	}
+	
+	function doLogin(){
+		var id = $('#i_userId').val();
+		var pw = $('#i_userPw').val();
+		
+		var jsonData = {
+			"id" : id,
+			"pw" : pw
+		};
+		
+		$.ajax({
+        	url : '/api/v1/login',
+        	type : 'POST',
+        	contentType : 'application/json', //서버에 json 타입으로 보낼 예정(요청) 
+        	data : JSON.stringify(jsonData),
+        	dataType : 'json',
+			success : function(response) {
+				if(response.user){
+					//페이지 이동 로직구현 예정
+					alert(response.name + "님 환영합니다. 🎉🎉");
+					location.href = '/users';
+				}else{
+					alert("아이디 혹은 비밀번호가 틀렸습니다.");
+				}
+			}
+        });
+	}
+	
+	function dosumit(data){
+		console.log(data);
+		
+		$.ajax({
+        	url : '/api/v1/login3',
+        	type : 'POST',
+        	contentType : 'application/json', //서버에 json 타입으로 보낼 예정(요청) 
+        	data : JSON.stringify(jsonData),
+        	dataType : 'json',
+			success : function(response) {
+				console.log(response);
+			}
+        });
+	}
+	
+</script>
+
+</html>

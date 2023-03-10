@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.EmpMapper">
+
+	<!-- DML - -->
+
+	<!-- id는 mapper에 있는 메소드이름과 동일, 리턴타입은 VO 클래스 ~! -->
+	<select id="selectEmp" resultType="com.example.demo.vo.EmpVo">
+		SELECT * FROM emp
+	</select>
+
+
+	<!-- * : 아스테리크스 -->
+	<select id="selectDept" resultType="com.example.demo.vo.DeptVO">
+		SELECT * FROM dept
+	</select>
+
+	<!-- insert, update, delete는 resultType int 이다! -->
+	<insert id="insertEMP">
+		INSERT INTO emp
+		(
+		empno,
+		ename,
+		job,
+		sal
+		)
+		VALUES
+		(
+		#{empno},
+		#{ename},
+		#{job},
+		#{sal}
+		)
+
+	</insert>
+
+	<delete id="deleteEmp">
+		DELETE FROM emp
+		WHERE empno = #{empno}
+	</delete>
+
+	<insert id="insertDEPT">
+		INSERT INTO dept
+		(
+		deptno,
+		dname,
+		loc
+		)
+		VALUES
+		(
+		#{deptno},
+		#{dname},
+		#{loc}
+		)
+
+	</insert>
+
+	<delete id="deleteDept">
+		DELETE FROM dept
+		WHERE deptno = #{deptno}
+	</delete>
+
+	<update id="updateEmp">
+		UPDATE emp
+		SET
+		sal = #{sal},
+		job = #{job}
+		WHERE empno = #{empno}
+	</update>
+
+
+	<!-- 회원가입 SQL 작성 -->
+	<insert id="insertUsers">
+		INSERT INTO users
+		(
+		id,
+		pw,
+		name
+		)
+		VALUES
+		(
+		#{id},
+		#{pw},
+		#{name}
+		)
+	</insert>
+
+	<!-- 로그인 (count)가 int형으로 리턴 -->
+	<select id="selectUsersFindById" resultType="integer">
+		SELECT
+		count(*)
+		FROM users
+		WHERE id = #{id}
+		<if test="pw != null">
+			AND pw = #{pw}
+		</if>
+	</select>
+	
+	<select id="selectUsers" resultType="com.example.demo.vo.UsersVO">
+		SELECT * FROM Users
+	</select>
+	
+	<delete id="deleteUsers">
+		DELETE FROM users
+		WHERE id = #{id}
+	</delete>
+	
+	<select id="selectUsersPassword" resultType="com.example.demo.vo.UsersVO">
+		SELECT
+			id,
+			pw,
+			name
+		FROM users
+		WHERE id =#{id}
+	</select>
+	
+
+
+
+
+
+
+
+
+</mapper>
